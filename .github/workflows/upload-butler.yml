@@ -31,13 +31,10 @@ jobs:
         include:
           - channel: "ubuntu_latest"
             asset-url: ${{ inputs.release_asset_url_ubuntu_latest }}
-            CMD_POST_UNZIP: chmod +x dist/chikkai
           - channel: "macos_latest"
             asset-url: ${{ inputs.release_asset_url_macos_latest }}
-            CMD_POST_UNZIP: chmod +x dist/chikkai
           - channel: "windows_latest"
             asset-url: ${{ inputs.release_asset_url_windows_latest }}
-            CMD_POST_UNZIP: ;
     steps:
       - name: Setup Butler
         run: |
@@ -51,7 +48,8 @@ jobs:
           mkdir dist
           unzip asset.zip -d dist
       - name: Post Unzip
-        run: ${{ matrix.CMD_POST_UNZIP }}
+        if: ! ${{ matrix.channel == 'windows_latest' }}
+        run: chmod +x dist/chikkai
       - name: Upload With Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
