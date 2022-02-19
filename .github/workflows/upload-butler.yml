@@ -3,6 +3,9 @@ name: build-python-upload-butler
 on:
   workflow_call:
     inputs:
+      itch_user:
+        required: true
+        type: string
       project_name:
         required: true
         type: string
@@ -50,4 +53,4 @@ jobs:
       - name: Upload With Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: ./butler push dist jovialknoll/${{ inputs.project_name }}:${{ matrix.channel }} --userversion "${GITHUB_REF_NAME:1}"
+        run: ./butler push dist ${{ inputs.itch_user }}/${{ inputs.project_name }}:${{ matrix.channel }} --userversion "${GITHUB_REF_NAME:1}"
