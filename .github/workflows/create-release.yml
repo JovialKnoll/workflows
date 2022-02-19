@@ -8,7 +8,7 @@ on:
         value: ${{ jobs.create_release.outputs.upload_url }}
       release_version:
         description: "The release version"
-        value: ${{ jobs.get_version.outputs.release_version }}
+        value: ${{ jobs.create_release.outputs.release_version }}
 
 jobs:
   create_release:
@@ -28,13 +28,11 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Checkout Commit
-        uses: actions/checkout@v2
+#      - name: Checkout Commit
+#        uses: actions/checkout@v2
       - name: Get Version
         id: get_version
         run: |
           TAGVERSION=$(git describe --tags --exact-match)
           value=`echo "${TAGVERSION:1}"`
-          echo "::echo::on"
           echo "::set-output name=release_version::$value"
-          echo "::echo::off"
