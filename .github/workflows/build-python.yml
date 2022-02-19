@@ -1,0 +1,86 @@
+name: build-python
+
+on:
+  workflow_call:
+    inputs:
+      project_name:
+        required: true
+        type: string
+      upload_url:
+        required: true
+        type: string
+    outputs:
+      release_asset_url_ubuntu_latest:
+        description: "The release asset url for ubuntu-latest"
+        value: ${{ jobs.build_python.outputs.release_asset_url_ubuntu_latest }}
+      release_asset_url_macos_latest:
+        description: "The release asset url for macos-latest"
+        value: ${{ jobs.build_python.outputs.release_asset_url_macos_latest }}
+      release_asset_url_windows_latest:
+        description: "The release asset url for windows-latest"
+        value: ${{ jobs.build_python.outputs.release_asset_url_windows_latest }}
+
+jobs:
+  build_python:
+    name: Build Python
+    outputs:
+      release_asset_url_ubuntu_latest: ${{ steps.output-release-asset-url.outputs.ubuntu-latest }}
+      release_asset_url_macos_latest: ${{ steps.output-release-asset-url.outputs.macos-latest }}
+      release_asset_url_windows_latest: ${{ steps.output-release-asset-url.outputs.windows-latest }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            CMD_CLEANUP: sed -i 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
+            CMD_ZIP: |
+              cd dist/
+              zip -r9 ../${{ inputs.project_name }}-build-ubuntu-latest.zip *
+          - os: macos-latest
+            CMD_CLEANUP: sed -i '' 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
+            CMD_ZIP: |
+              cd dist/
+              zip -r9 ../${{ inputs.project_name }}-build-macos-latest.zip *
+          - os: windows-latest
+            CMD_CLEANUP: ;
+            CMD_ZIP: Compress-Archive -Path dist/* -DestinationPath ${{ inputs.project_name }}-build-windows-latest.zip
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r src/requirements.txt pyinstaller
+      - name: Create Spec File
+        run: pyinstaller --clean -ywF -i src/icon.ico -n ${{ inputs.project_name }} src/main.py
+      - name: Build Exe
+        run: pyinstaller -y ${{ inputs.project_name }}.spec
+      - name: Copy Assets
+        run: cp -r src/assets dist/assets
+      - name: Copy Version
+        run: git describe --tags --exact-match > dist/assets/txt/version.txt
+      - name: Copy License
+        run: cp LICENSE.txt dist/
+      - name: Copy Readme
+        run: cp README.txt dist/
+      - name: Cleanup
+        run: ${{ matrix.CMD_CLEANUP }}
+      - name: Zip Build
+        run: ${{ matrix.CMD_ZIP }}
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ inputs.upload_url }}
+          asset_path: ./${{ inputs.project_name }}-build-${{ matrix.os }}.zip
+          asset_name: ${{ inputs.project_name }}-build-${{ matrix.os }}.zip
+          asset_content_type: application/zip
+      - name: Output Release Asset URL
+        id: output-release-asset-url
+        run: echo '::set-output name=${{ matrix.os }}::${{ steps.upload-release-asset.outputs.browser_download_url }}'
