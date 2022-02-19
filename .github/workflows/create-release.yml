@@ -35,8 +35,6 @@ jobs:
         run: |
           TAGVERSION=$(git describe --tags --exact-match)
           value=`echo "${TAGVERSION:1}"`
-          echo TEST ECHO
-          echo "$value"
-          echo "name=release_version::$value"
-          echo "test again"
+          echo "::echo::on"
           echo "::set-output name=release_version::$value"
+          echo "::echo::off"
