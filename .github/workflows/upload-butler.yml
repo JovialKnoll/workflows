@@ -48,7 +48,7 @@ jobs:
           mkdir dist
           unzip asset.zip -d dist
       - name: Post Unzip
-        if: ! ${{ matrix.channel == 'windows_latest' }}
+        if: startsWith(matrix.channel, 'windows') != true
         run: chmod +x dist/chikkai
       - name: Upload With Butler
         env:
