@@ -28,11 +28,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-#      - name: Checkout Commit
-#        uses: actions/checkout@v2
       - name: Get Version
         id: get_version
-        run: |
-          TAGVERSION=$(git describe --tags --exact-match)
-          value=`echo "${TAGVERSION:1}"`
-          echo "::set-output name=release_version::$value"
+        run: echo "::set-output name=release_version::$GITHUB_REF_NAME"
