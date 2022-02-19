@@ -6,9 +6,6 @@ on:
       project_name:
         required: true
         type: string
-      release_version:
-        required: true
-        type: string
       release_asset_url_ubuntu_latest:
         required: true
         type: string
@@ -53,4 +50,4 @@ jobs:
       - name: Upload With Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: ./butler push dist jovialknoll/${{ inputs.project_name }}:${{ matrix.channel }} --userversion ${{ inputs.release_version }}
+        run: ./butler push dist jovialknoll/${{ inputs.project_name }}:${{ matrix.channel }} --userversion "${GITHUB_REF_NAME:1}"

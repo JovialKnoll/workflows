@@ -6,16 +6,12 @@ on:
       upload_url:
         description: "The release upload URL"
         value: ${{ jobs.create_release.outputs.upload_url }}
-      release_version:
-        description: "The release version"
-        value: ${{ jobs.create_release.outputs.release_version }}
 
 jobs:
   create_release:
     name: Create Release
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
-      release_version: ${{ steps.get_version.outputs.release_version }}
     runs-on: ubuntu-latest
     steps:
       - name: Create Release
@@ -28,6 +24,3 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Get Version
-        id: get_version
-        run: echo "::set-output name=release_version::$GITHUB_REF_NAME"
