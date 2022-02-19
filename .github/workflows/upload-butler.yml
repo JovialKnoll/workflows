@@ -26,11 +26,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - channel: "ubuntu_latest"
+          - channel: "ubuntu-latest"
             asset-url: ${{ inputs.release_asset_url_ubuntu_latest }}
-          - channel: "macos_latest"
+          - channel: "macos-latest"
             asset-url: ${{ inputs.release_asset_url_macos_latest }}
-          - channel: "windows_latest"
+          - channel: "windows-latest"
             asset-url: ${{ inputs.release_asset_url_windows_latest }}
     steps:
       - name: Setup Butler
