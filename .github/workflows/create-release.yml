@@ -8,7 +8,7 @@ on:
         value: ${{ jobs.create_release.outputs.upload_url }}
       release_version:
         description: "The release version"
-        value: ${{ jobs.create_release.outputs.upload_url }}
+        value: ${{ jobs.get_version.outputs.release_version }}
 
 jobs:
   create_release:
