@@ -49,7 +49,7 @@ jobs:
           unzip asset.zip -d dist
       - name: Post Unzip
         if: startsWith(matrix.channel, 'windows') != true
-        run: chmod +x dist/chikkai
+        run: chmod +x dist/${{ inputs.project_name }}
       - name: Upload With Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
