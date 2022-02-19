@@ -1,0 +1,58 @@
+name: build-python-upload-butler
+
+on:
+  workflow_call:
+    inputs:
+      project_name:
+        required: true
+        type: string
+      release_version:
+        required: true
+        type: string
+      release_asset_url_ubuntu_latest:
+        required: true
+        type: string
+      release_asset_url_macos_latest:
+        required: true
+        type: string
+      release_asset_url_windows_latest:
+        required: true
+        type: string
+    secrets:
+      BUTLER_API_KEY:
+        required: true
+
+jobs:
+  build_python:
+    name: Build Python
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - channel: "ubuntu_latest"
+            asset-url: ${{ inputs.release_asset_url_ubuntu_latest }}
+            CMD_POST_UNZIP: chmod +x dist/chikkai
+          - channel: "macos_latest"
+            asset-url: ${{ inputs.release_asset_url_macos_latest }}
+            CMD_POST_UNZIP: chmod +x dist/chikkai
+          - channel: "windows_latest"
+            asset-url: ${{ inputs.release_asset_url_windows_latest }}
+            CMD_POST_UNZIP: ;
+    steps:
+      - name: Setup Butler
+        run: |
+          curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          unzip butler.zip
+          chmod +x butler
+      - name: Download Asset
+        run: curl -L -o asset.zip ${{ matrix.asset-url }}
+      - name: Unzip Asset
+        run: |
+          mkdir dist
+          unzip asset.zip -d dist
+      - name: Post Unzip
+        run: ${{ matrix.CMD_POST_UNZIP }}
+      - name: Upload With Butler
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: ./butler push dist jovialknoll/${{ inputs.project_name }}:${{ matrix.channel }} --userversion ${{ inputs.release_version }}

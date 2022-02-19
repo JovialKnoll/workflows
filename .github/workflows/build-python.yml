@@ -1,4 +1,4 @@
-name: build-python-upload-butler
+name: build-python
 
 on:
   workflow_call:
@@ -9,13 +9,24 @@ on:
       upload_url:
         required: true
         type: string
-    secrets:
-      BUTLER_API_KEY:
-        required: true
+    outputs:
+      release_asset_url_ubuntu_latest:
+        description: "The release asset url for ubuntu-latest"
+        value: ${{ jobs.build_python.outputs.release_asset_url_ubuntu_latest }}
+      release_asset_url_macos_latest:
+        description: "The release asset url for macos-latest"
+        value: ${{ jobs.build_python.outputs.release_asset_url_macos_latest }}
+      release_asset_url_windows_latest:
+        description: "The release asset url for windows-latest"
+        value: ${{ jobs.build_python.outputs.release_asset_url_windows_latest }}
 
 jobs:
   build_python:
     name: Build Python
+    outputs:
+      release_asset_url_ubuntu_latest: ${{ steps.output-release-asset-url.outputs.ubuntu-latest }}
+      release_asset_url_macos_latest: ${{ steps.output-release-asset-url.outputs.macos-latest }}
+      release_asset_url_windows_latest: ${{ steps.output-release-asset-url.outputs.windows-latest }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -25,33 +36,14 @@ jobs:
             CMD_ZIP: |
               cd dist/
               zip -r9 ../${{ inputs.project_name }}-build-ubuntu-latest.zip *
-            CMD_BUTLER_SETUP: |
-              TAGVERSION=$(git describe --tags --exact-match)
-              echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
-              curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
-              unzip butler.zip
-              chmod +x butler
           - os: macos-latest
             CMD_CLEANUP: sed -i '' 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
             CMD_ZIP: |
               cd dist/
               zip -r9 ../${{ inputs.project_name }}-build-macos-latest.zip *
-            CMD_BUTLER_SETUP: |
-              TAGVERSION=$(git describe --tags --exact-match)
-              echo "TAGVERSION=${TAGVERSION:1}" >> $GITHUB_ENV
-              curl -L -o butler.zip https://broth.itch.ovh/butler/darwin-amd64/LATEST/archive/default
-              unzip butler.zip
-              chmod +x butler
           - os: windows-latest
             CMD_CLEANUP: ;
             CMD_ZIP: Compress-Archive -Path dist/* -DestinationPath ${{ inputs.project_name }}-build-windows-latest.zip
-            CMD_BUTLER_SETUP: |
-              $tagversion = git describe --tags --exact-match
-              $tagversion = $tagversion.Substring(1)
-              echo "TAGVERSION=$tagversion" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
-              Invoke-WebRequest -o butler.zip https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
-              Expand-Archive -Path butler.zip -DestinationPath .
-      fail-fast: false
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v2
@@ -89,9 +81,6 @@ jobs:
           asset_path: ./${{ inputs.project_name }}-build-${{ matrix.os }}.zip
           asset_name: ${{ inputs.project_name }}-build-${{ matrix.os }}.zip
           asset_content_type: application/zip
-      - name: Setup Butler
-        run: ${{ matrix.CMD_BUTLER_SETUP }}
-      - name: Upload With Butler
-        env:
-          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: ./butler push dist jovialknoll/${{ inputs.project_name }}:${{ matrix.os }} --userversion ${{ env.TAGVERSION }}
+      - name: Output Release Asset URL
+        id: output-release-asset-url
+        run: echo '::set-output name=${{ matrix.os }}::${{ steps.upload-release-asset.outputs.browser_download_url }}'

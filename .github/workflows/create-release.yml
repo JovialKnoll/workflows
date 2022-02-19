@@ -6,13 +6,17 @@ on:
       upload_url:
         description: "The release upload URL"
         value: ${{ jobs.create_release.outputs.upload_url }}
+      release_version:
+        description: "The release version"
+        value: ${{ jobs.create_release.outputs.upload_url }}
 
 jobs:
   create_release:
     name: Create Release
-    runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_version: ${{ steps.get_version.outputs.release_version }}
+    runs-on: ubuntu-latest
     steps:
       - name: Create Release
         id: create_release
@@ -24,3 +28,11 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+      - name: Checkout Commit
+        uses: actions/checkout@v2
+      - name: Get Version
+        id: get_version
+        run: |
+          TAGVERSION=$(git describe --tags --exact-match)
+          value=`echo "${TAGVERSION:1}"`
+          echo ::set-output name=release_version::$value
