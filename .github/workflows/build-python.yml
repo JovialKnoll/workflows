@@ -42,7 +42,7 @@ jobs:
           - os: macos-latest
             CMD_CLEANUP: |
               sed -i '' 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
-              rm -rf ${{ inputs.project_name }}.app/
+              rm -rf dist/${{ inputs.project_name }}.app/
             CMD_ZIP: |
               cd dist/
               zip -r9 ../${{ inputs.project_name }}-build-macos-latest.zip *
