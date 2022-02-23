@@ -36,19 +36,12 @@ jobs:
         include:
           - os: ubuntu-latest
             CMD_CLEANUP: sed -i 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
-            CMD_ZIP: |
-              cd dist/
-              zip -r9 ../${{ inputs.project_name }}-build-ubuntu-latest.zip *
           - os: macos-latest
             CMD_CLEANUP: |
               sed -i '' 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
               rm -rf dist/${{ inputs.project_name }}.app/
-            CMD_ZIP: |
-              cd dist/
-              zip -r9 ../${{ inputs.project_name }}-build-macos-latest.zip *
           - os: windows-latest
             CMD_CLEANUP: ;
-            CMD_ZIP: Compress-Archive -Path dist/* -DestinationPath ${{ inputs.project_name }}-build-windows-latest.zip
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v2
@@ -76,7 +69,10 @@ jobs:
       - name: Cleanup
         run: ${{ matrix.CMD_CLEANUP }}
       - name: Zip Build
-        run: ${{ matrix.CMD_ZIP }}
+        shell: bash
+        run: |
+          cd dist/
+          zip -r9 ../${{ inputs.project_name }}-build-${{ matrix.os }}.zip *
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
