@@ -1,4 +1,4 @@
-name: build-python-upload-butler
+name: upload-butler
 
 on:
   workflow_call:
@@ -23,8 +23,8 @@ on:
         required: true
 
 jobs:
-  build_python:
-    name: Build Python
+  upload_butler:
+    name: Upload Butler
     runs-on: ubuntu-latest
     strategy:
       matrix:
