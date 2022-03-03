@@ -22,4 +22,3 @@ jobs:
         run: |
           cd tests
           python -m unittest discover
-          cd ..

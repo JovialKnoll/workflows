@@ -9,6 +9,9 @@ on:
       actual_publish:
         required: true
         type: boolean
+      package_version:
+        required: true
+        type: string
     secrets:
       TEST_PYPI_API_TOKEN:
         required: true
@@ -31,19 +34,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install --upgrade setuptools wheel
       - name: Install pypa/build
-        run: >-
-          python -m
-          pip install
-          build
-          --user
+        run: python -m pip install build --user
+      - name: Set Version
+        run: sed -i 's/VERSION/${{ inputs.package_version }}/g' setup.cfg
       - name: Build Package
-        run: >-
-          python -m
-          build
-          --sdist
-          --wheel
-          --outdir dist/
-          .
+        run: python -m build --sdist --wheel --outdir dist/ .
       - name: Publish to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
