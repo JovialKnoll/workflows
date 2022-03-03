@@ -6,6 +6,9 @@ on:
       python_version:
         required: true
         type: string
+      actual_publish:
+        required: true
+        type: boolean
     secrets:
       TEST_PYPI_API_TOKEN:
         required: true
@@ -48,7 +51,7 @@ jobs:
           repository_url: https://test.pypi.org/legacy/
           skip_existing: true
       - name: Publish to PyPI
-        if: startsWith(github.ref, 'refs/tags')
+        if: inputs.actual_publish
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
