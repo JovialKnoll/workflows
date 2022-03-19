@@ -20,6 +20,7 @@ jobs:
           python-version: ${{ inputs.python_version }}
       - name: Test
         run: |
+          cp -a src/. tests/
           cd tests
           python -m pip install --upgrade pip
           pip install -r requirements.txt
