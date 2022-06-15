@@ -59,7 +59,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r src/requirements.txt pyinstaller
+          pip install -r src/requirements.txt pyinstaller Pillow
       - name: Create Spec File
         run: pyinstaller --clean -ywF -i src/icon.ico -n ${{ inputs.project_name }} src/main.py
       - name: Build Exe
