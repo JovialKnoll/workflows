@@ -88,5 +88,5 @@ jobs:
       - name: Output Release Asset URL
         id: output-release-asset-url
         run: |
-          echo 'https://github.com/${{github.repository}}/releases/download/${{env.GITHUB_REF_NAME}}/${{ inputs.project_name }}-build-${{ matrix.os }}.zip'
-          echo '${{ matrix.os }}=https://github.com/${{github.repository}}/releases/download/${{env.GITHUB_REF_NAME}}/${{ inputs.project_name }}-build-${{ matrix.os }}.zip' >> $GITHUB_OUTPUT
+          echo 'https://github.com/${{github.repository}}/releases/download/${GITHUB_REF:10}/${{ inputs.project_name }}-build-${{ matrix.os }}.zip'
+          echo '${{ matrix.os }}=https://github.com/${{github.repository}}/releases/download/${GITHUB_REF:10}/${{ inputs.project_name }}-build-${{ matrix.os }}.zip' >> $GITHUB_OUTPUT
