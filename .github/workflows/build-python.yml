@@ -9,9 +9,6 @@ on:
       python_version:
         required: true
         type: string
-      upload_url:
-        required: true
-        type: string
     outputs:
       release_asset_url_ubuntu_latest:
         description: "The release asset url for ubuntu-latest"
@@ -77,16 +74,15 @@ jobs:
         run: ${{ matrix.CMD_CLEANUP }}
       - name: Zip Build
         run: ${{ matrix.CMD_ZIP }}
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release, Upload Asset
+        id: create-release-upload-asset
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ inputs.upload_url }}
-          asset_path: ./${{ inputs.project_name }}-build-${{ matrix.os }}.zip
-          asset_name: ${{ inputs.project_name }}-build-${{ matrix.os }}.zip
-          asset_content_type: application/zip
+          name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+          files: ./${{ inputs.project_name }}-build-${{ matrix.os }}.zip
       - name: Output Release Asset URL
         id: output-release-asset-url
-        run: echo '${{ matrix.os }}=${{ steps.upload-release-asset.outputs.browser_download_url }}' >> $GITHUB_OUTPUT
+        run: echo '${{ matrix.os }}=${{ fromJSON(steps.create-release-upload-asset.outputs.assets)[0].browser_download_url }}' >> $GITHUB_OUTPUT
