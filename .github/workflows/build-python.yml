@@ -87,4 +87,6 @@ jobs:
           asset_content_type: application/zip
       - name: Output Release Asset URL
         id: output-release-asset-url
-        run: echo '${{ matrix.os }}=${{ steps.upload-release-asset.outputs.browser_download_url }}' >> $GITHUB_OUTPUT
+        run: |
+          echo 'https://github.com/${{github.repository}}/releases/download/${{GITHUB_REF#refs/*/}}/${{ inputs.project_name }}-build-${{ matrix.os }}.zip'
+          echo '${{ matrix.os }}=https://github.com/${{github.repository}}/releases/download/${{GITHUB_REF#refs/*/}}/${{ inputs.project_name }}-build-${{ matrix.os }}.zip' >> $GITHUB_OUTPUT
