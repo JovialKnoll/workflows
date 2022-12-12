@@ -89,4 +89,4 @@ jobs:
           asset_content_type: application/zip
       - name: Output Release Asset URL
         id: output-release-asset-url
-        run: echo '::set-output name=${{ matrix.os }}::${{ steps.upload-release-asset.outputs.browser_download_url }}'
+        run: echo '${{ matrix.os }}=${{ steps.upload-release-asset.outputs.browser_download_url }}' >> $GITHUB_OUTPUT
