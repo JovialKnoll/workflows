@@ -18,6 +18,6 @@ jobs:
         id: create_release
         uses: shogo82148/actions-create-release@v1
         with:
-          release_name: Release ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
