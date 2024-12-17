@@ -36,14 +36,7 @@ jobs:
           - channel: "windows-latest"
             asset-url: ${{ inputs.release_asset_url_windows_latest }}
     steps:
-      - name: Cache Butler
-        id: cache-butler
-        uses: actions/cache@v4
-        with:
-          path: butler
-          key: butler
       - name: Setup Butler
-        if: steps.cache-butler.outputs.cache-hit != 'true'
         run: |
           curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
           unzip butler.zip
