@@ -36,12 +36,6 @@ jobs:
           - channel: "windows-latest"
             asset-url: ${{ inputs.release_asset_url_windows_latest }}
     steps:
-      - name: Setup Butler
-        run: |
-          curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
-          unzip butler.zip
-          chmod +x butler
-          ./butler -V
       - name: Download Asset
         run: curl -L -o asset.zip ${{ matrix.asset-url }}
       - name: Unzip Asset
@@ -51,6 +45,12 @@ jobs:
       - name: Post Unzip
         if: startsWith(matrix.channel, 'windows') != true
         run: chmod +x dist/${{ inputs.project_name }}
+      - name: Download Butler
+        run: |
+          curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          unzip butler.zip
+          chmod +x butler
+          ./butler -V
       - name: Upload With Butler
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
