@@ -68,7 +68,7 @@ jobs:
         run: cp -r src/assets dist/assets
       - name: Copy Version
         shell: bash
-        run: echo "$GITHUB_REF_NAME" > dist/assets/txt/version.txt
+        run: echo "$GITHUB_REF_NAME" > dist/assets/version.txt
       - name: Copy License
         run: cp LICENSE.txt dist/
       - name: Copy Readme
