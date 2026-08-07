@@ -20,6 +20,7 @@ jobs:
           python-version: ${{ inputs.python_version }}
       - name: Test
         run: |
+          sudo apt install -y libegl1-mesa
           cp -a src/. tests/
           cd tests
           python -m pip install --upgrade pip
