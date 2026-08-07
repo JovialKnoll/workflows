@@ -35,7 +35,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            CMD_SETUP: ;
+            CMD_SETUP: sudo apt-get install -y libx11-dev
             CMD_CLEANUP: sed -i 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
             CMD_ZIP: |
               cd dist/
