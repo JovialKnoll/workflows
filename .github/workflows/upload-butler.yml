@@ -22,6 +22,9 @@ on:
       BUTLER_API_KEY:
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   upload_butler:
     name: Upload Butler

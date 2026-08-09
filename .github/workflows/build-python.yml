@@ -23,6 +23,9 @@ on:
         description: "The release asset url for windows-latest"
         value: ${{ jobs.build_python.outputs.release_asset_url_windows_latest }}
 
+permissions:
+  contents: read
+
 jobs:
   build_python:
     name: Build Python
@@ -55,6 +58,8 @@ jobs:
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Setup Python
         uses: actions/setup-python@v7
         with:
