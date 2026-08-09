@@ -16,8 +16,8 @@ permissions:
   contents: read
 
 jobs:
-  publish_python_package:
-    name: Publish Python Package
+  publish_python:
+    name: Publish Python
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Commit
