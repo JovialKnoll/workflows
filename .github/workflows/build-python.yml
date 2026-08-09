@@ -44,7 +44,7 @@ jobs:
               cd dist/
               zip -r9 ../${{ inputs.project_name }}-build-ubuntu-latest.zip *
           - os: macos-latest
-            CMD_SETUP: ;
+            CMD_SETUP: echo "no setup"
             CMD_CLEANUP: |
               sed -i '' 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
               rm -rf dist/${{ inputs.project_name }}.app/
@@ -52,8 +52,8 @@ jobs:
               cd dist/
               zip -r9 ../${{ inputs.project_name }}-build-macos-latest.zip *
           - os: windows-latest
-            CMD_SETUP: ;
-            CMD_CLEANUP: ;
+            CMD_SETUP: echo "no setup"
+            CMD_CLEANUP: echo "no cleanup"
             CMD_ZIP: Compress-Archive -Path dist/* -DestinationPath ${{ inputs.project_name }}-build-windows-latest.zip
     steps:
       - name: Checkout Commit
