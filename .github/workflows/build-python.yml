@@ -24,7 +24,7 @@ on:
         value: ${{ jobs.build_python.outputs.release_asset_url_windows_latest }}
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build_python:
