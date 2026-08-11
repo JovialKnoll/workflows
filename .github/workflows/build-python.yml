@@ -50,7 +50,7 @@ jobs:
           - os: windows-latest
             CMD_SETUP: echo "no setup"
             CMD_CLEANUP: echo "no cleanup"
-            CMD_ZIP: Compress-Archive -Path dist/* -DestinationPath ${{ inputs.project_name }}-build-windows-latest.zip
+            CMD_ZIP: Compress-Archive -DestinationPath ${{ inputs.project_name }}-build-windows-latest.zip -Path dist/*
     steps:
       - name: Checkout Commit
         uses: actions/checkout@v7
