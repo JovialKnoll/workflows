@@ -1,4 +1,4 @@
-name: test-python
+name: test-python-mac
 
 on:
   workflow_call:
@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 jobs:
-  test_python:
-    name: Test Python
+  test_python_mac:
+    name: Test Python MacOS
     runs-on: macos-latest
     steps:
       - name: Checkout Commit
