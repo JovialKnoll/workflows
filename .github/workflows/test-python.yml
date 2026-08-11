@@ -27,8 +27,8 @@ jobs:
         run: |
           sudo apt-get install -y libx11-dev
           python -m pip install --upgrade pip
-          cp -a src/. tests/
           pip install -r tests/requirements.txt
+          cp -a src/. tests/
       - name: Test
         working-directory: ./tests
         run: python -m unittest discover
