@@ -40,13 +40,13 @@ jobs:
           - os: ubuntu-latest
             CMD_SETUP: sudo apt-get install -y libx11-dev
             CMD_CLEANUP: sed -i 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
-            CMD_ZIP: zip -r9 ${{ inputs.project_name }}-build-ubuntu-latest.zip dist/*
+            CMD_ZIP: cd dist/; zip -r9 ${{ inputs.project_name }}-build-ubuntu-latest.zip *
           - os: macos-latest
             CMD_SETUP: echo "no setup"
             CMD_CLEANUP: |
               sed -i '' 's/${{ inputs.project_name }}.exe/${{ inputs.project_name }}/g' dist/README.txt
               rm -rf dist/${{ inputs.project_name }}.app/
-            CMD_ZIP: zip -r9 ${{ inputs.project_name }}-build-macos-latest.zip dist/*
+            CMD_ZIP: cd dist/; zip -r9 ${{ inputs.project_name }}-build-macos-latest.zip *
           - os: windows-latest
             CMD_SETUP: echo "no setup"
             CMD_CLEANUP: echo "no cleanup"
